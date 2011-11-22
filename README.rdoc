@@ -1,0 +1,84 @@
+
+= solaris-contents
+
+Author:: Martin Carpenter
+Email:: mcarpenter@free.fr
+Copyright:: Copyright (c) Martin Carpenter 2011
+
+
+== About
+
+The solaris-contents gem helps with the manipulation of SunOS and Solaris
+contents entries for SysV packages. Note that the manual page contents(4)
+states that this interface is declared as unstable although practically
+speaking this is unlikely to be an issue.
+
+     As    shown    above,    the    interface    stability    of
+     /var/sadm/install/contents  is Unstable (see attributes(5)).
+     It is common practice to use this file in a read-only manner
+     to  determine which files belong to which packages installed
+     on a system. While this  file  has  been  present  for  many
+     releases  of  the  Solaris operating system, it might not be
+     present in future  releases.  The  fully  supported  way  to
+     obtain  information  from  the installed package database is
+     through pkgchk(1M). It is highly recommended  that  you  use
+     pkgchk rather than relying on the contents file.
+
+This prescient comment is coming true: Solaris 11 moves to a new packaging
+format (IPS) and although contents(4) remains on the system and in the
+manual pages it appears to be unused.
+
+This gem only handles "new style" contents entries. In extensive testing
+we have not seen any old style entries (these are lines that do not
+begin with a forward slash, /).
+
+See Errata below from where Oracle's specification in contents(4)
+differs from reality.
+
+== Examples
+
+=== Read and interpret contents(4)
+
+    require 'solaris/contents'
+
+    Solaris::Contents.read.each do |c|
+      puts c
+      puts c.ftype
+      puts c.path
+      puts c.rpath
+      puts c.install_path
+      puts c.packages.inspect
+    end
+      => /bin=./usr/bin s none SUNWcsr
+         s
+         /bin
+         /usr/bin
+	 none
+	 [ "SUNWcsr" ]
+         ...
+
+== Errata
+
+Testing against a corpus of ~150 contents files revealed the following
+discrepancies from the specification in the manual pages for contents(4)
+and pkgmap(4).
+
+=== Multiple packages per entry
+
+Multiple packages are only explicitly stated for ftype d in contents(4).
+Numerous counterexamples.
+
+=== Installation class name length
+
+pkgmap(4) states that the class name should be "no longer than 12 
+characters". Counterexample: "pkcs11confbase".
+
+=== Comments
+pkgadd(1M) writes comments to the tail of the contents file:
+
+    # Last modified by pkgadd for SMClintl package
+    # Tue Sep 20 21:57:16 2011
+
+If the Solaris::Contents#from_line constructor is fed a line like this
+(or a blank line) then it will return nil.
+
