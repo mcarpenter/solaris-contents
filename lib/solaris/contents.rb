@@ -204,10 +204,13 @@ module Solaris
     end
 
     # Return the sum of the byte values of the file, modulo 65535. This is 
-    # the value returned by Solaris' sum(1) (NB. not cksum(1) or sum(1B)).
+    # the value returned by Solaris' sum(1) and based on the ATT SysV
+    # algorithm (NB. not cksum(1) or sum(1B) or the sum(1) BSD algorithm).
     # This is a weak checksum and should not be used for security purposes.
     def self.sum(io_or_string)
-      io_or_string.each_byte.inject { |r, v| ( r + v ) & 0xffff }
+      s = io_or_string.each_byte.inject { |r, v| (r + v) & 0xffffffff }
+      r = (s & 0xffff) + ((s & 0xffffffff) >> 16)
+      (r & 0xffff) + (r >> 16)
     end
 
     # Create a new contents(4) object.

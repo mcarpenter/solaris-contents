@@ -12,8 +12,8 @@ class TestContents < Test::Unit::TestCase #:nodoc:
     assert_equal( 128, Solaris::Contents.sum( '@@' ) )
     assert_equal( 64_000, Solaris::Contents.sum( '@' * 1_000 ) )
     assert_equal( 65_472, Solaris::Contents.sum( '@' * 1_023 ) )
-    assert_equal( 0, Solaris::Contents.sum( '@' * 1_024 ) )
-    assert_equal( 64, Solaris::Contents.sum( '@' * 1_025 ) )
+    assert_equal( 1, Solaris::Contents.sum( '@' * 1_024 ) )
+    assert_equal( 65, Solaris::Contents.sum( '@' * 1_025 ) )
   end
 
   def test_sum_from_io
