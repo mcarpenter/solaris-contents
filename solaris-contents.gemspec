@@ -14,6 +14,6 @@ Gem::Specification.new do |s|
   s.rubyforge_project = nil
   s.summary = 'Parse and write Solaris package contents records'
   s.test_files = FileList[ "{test}/**/test_*.rb" ].to_a
-  s.version = '1.0.0'
+  s.version = '1.0.1'
 end
 
